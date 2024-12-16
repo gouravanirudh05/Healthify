@@ -7,6 +7,7 @@ import LoginForm from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 //import AppointmentScheduler from "./components/AppointmentScheduler";
 import Profile from "./pages/Profile";
+import { ToastContainer } from "react-toastify";
 
 const App = () => {
   return (
