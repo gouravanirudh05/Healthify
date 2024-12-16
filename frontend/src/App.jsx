@@ -26,6 +26,7 @@ const App = () => {
         </div>
 
         {/* Footer */}
+        <ToastContainer />
         <Footer />
       </div>
     </Router>

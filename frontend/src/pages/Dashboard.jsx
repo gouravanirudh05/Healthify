@@ -2,6 +2,7 @@ import React from "react";
 
 const Dashboard = () => {
   return (
+    
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow p-4">
         <h1 className="text-2xl font-bold text-gray-700">Dashboard</h1>

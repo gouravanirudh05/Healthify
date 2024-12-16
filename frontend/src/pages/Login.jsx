@@ -8,7 +8,7 @@ const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); // For programmatic navigation
+  const navigate = useNavigate();
 
   const user_auth = async (event) => {
     event.preventDefault();
@@ -17,11 +17,9 @@ const LoginForm = () => {
     try {
       if (signState === "Sign In") {
         await login(email, password);
-        alert("Logged in successfully!");
         navigate("/dashboard"); // Redirect to the dashboard after successful login
       } else {
         await signup(name, email, password);
-        alert("Signed up successfully!");
         navigate("/dashboard"); // Redirect to the dashboard after successful signup
       }
     } catch (error) {
