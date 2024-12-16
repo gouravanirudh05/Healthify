@@ -2,10 +2,10 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import AppointmentForm from './components/AppointmentForm';
 import Hero from "./pages/Hero";
 import LoginForm from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-//import AppointmentScheduler from "./components/AppointmentScheduler";
 import Profile from "./pages/Profile";
 import { ToastContainer } from "react-toastify";
 
@@ -23,6 +23,7 @@ const App = () => {
             <Route path="/login" element={<LoginForm />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/schedule-appointment" element={<AppointmentForm />} /> {/* New route */}
           </Routes>
         </div>
 

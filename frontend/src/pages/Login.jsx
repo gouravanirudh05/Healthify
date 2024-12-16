@@ -17,16 +17,21 @@ const LoginForm = () => {
     setLoading(true);
 
     try {
-      if (signState === "Sign In") {
+      if (signState === "Sign In") 
+      {
         await login(email, password);
-        navigate("/dashboard"); // Redirect to the dashboard after successful login
-      } else {
+        toast.success("Login successful!"); // Redirect to the dashboard after successful login
+        navigate("/dashboard");
+      } 
+      else {
+        navigate("/signup");
         await signup(name, email, password);
+        toast.success("Login successful!");
         navigate("/dashboard"); // Redirect to the dashboard after successful signup
       }
     } catch (error) {
       toast.error(`Error: ${error.message}`); // Display error with Toastify
-      // Stay on the current page
+      navigate("/login")
     } finally {
       setLoading(false);
     }

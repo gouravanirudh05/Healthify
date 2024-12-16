@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { logout } from "../firebase"; // Import your logout function
+import { Link } from "react-router-dom"; // Import Link for navigation
 
 const Navbar = () => {
   const { user } = useAuth();
@@ -17,8 +18,15 @@ const Navbar = () => {
     <nav className="bg-white shadow-md p-4 flex justify-between items-center">
       <h1 className="text-2xl font-bold text-blue-600">Healthify</h1>
       <div className="space-x-4 flex items-center">
-        <a href="/" className="text-gray-600 hover:text-blue-600">Home</a>
-        <a href="/dashboard" className="text-gray-600 hover:text-blue-600">Dashboard</a>
+        <Link to="/" className="text-gray-600 hover:text-blue-600">
+          Home
+        </Link>
+        <Link to="/dashboard" className="text-gray-600 hover:text-blue-600">
+          Dashboard
+        </Link>
+        <Link to="/schedule-appointment" className="text-gray-600 hover:text-blue-600">
+          Schedule Appointment  {/* New link to appointment form */}
+        </Link>
         {user ? (
           <div className="relative">
             <button
@@ -33,12 +41,12 @@ const Navbar = () => {
             </button>
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 z-10">
-                <a
-                  href="/profile"
+                <Link
+                  to="/profile"
                   className="block px-4 py-2 text-gray-600 hover:bg-gray-100"
                 >
                   Profile
-                </a>
+                </Link>
                 <button
                   onClick={() => setShowLogoutConfirm(true)}
                   className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
@@ -49,12 +57,12 @@ const Navbar = () => {
             )}
           </div>
         ) : (
-          <a
-            href="/login"
+          <Link
+            to="/login"
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
           >
             Login
-          </a>
+          </Link>
         )}
       </div>
 
