@@ -8,7 +8,8 @@ import LoginForm from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import { ToastContainer } from "react-toastify";
-
+import HealthBlog from "./pages/HealthBlog";
+import Blog from "./pages/Blog";
 const App = () => {
   return (
     <Router>
@@ -19,6 +20,8 @@ const App = () => {
         {/* Main Content */}
         <div className="flex-grow">
           <Routes>
+             <Route path="/news" element={<HealthBlog />} />
+             <Route path="/blog" element={<Blog />} />
             <Route path="/" element={<Hero />} />
             <Route path="/login" element={<LoginForm />} />
             <Route path="/dashboard" element={<Dashboard />} />

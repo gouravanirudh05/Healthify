@@ -5,9 +5,11 @@ import "leaflet/dist/leaflet.css";
 const Dashboard = () => {
   const [userLocation, setUserLocation] = useState([37.7749, -122.4194]); // Default: San Francisco
   const [hospitals, setHospitals] = useState([]);
+  const [bmiResult, setBmiResult] = useState(null);
+  const [bmiInput, setBmiInput] = useState({ weight: "", height: "" });
 
+  // Fetch user location on component mount
   useEffect(() => {
-    // Get user location from the browser
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -24,6 +26,7 @@ const Dashboard = () => {
     }
   }, []);
 
+  // Function to fetch nearby hospitals
   const fetchNearbyHospitals = async (lat, lng) => {
     try {
       const response = await fetch(
@@ -44,6 +47,27 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error fetching hospitals:", error);
     }
+  };
+
+  // BMI Calculation Logic
+  const calculateBMI = () => {
+    const { weight, height } = bmiInput;
+
+    if (!weight || !height) {
+      alert("Please enter both weight (kg) and height (cm).");
+      return;
+    }
+
+    const heightInMeters = height / 100;
+    const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(2);
+
+    let status = "";
+    if (bmi < 18.5) status = "Underweight";
+    else if (bmi >= 18.5 && bmi < 24.9) status = "Normal weight";
+    else if (bmi >= 25 && bmi < 29.9) status = "Overweight";
+    else status = "Obesity";
+
+    setBmiResult({ bmi, status });
   };
 
   return (
@@ -70,6 +94,48 @@ const Dashboard = () => {
           </button>
         </div>
 
+        {/* Section: BMI Calculator */}
+        <div className="bg-white shadow rounded p-6">
+          <h2 className="text-xl font-semibold text-gray-800">BMI Calculator</h2>
+          <p className="text-gray-600 mt-2">Check your Body Mass Index.</p>
+          <div className="mt-4">
+            <input
+              type="number"
+              placeholder="Weight (kg)"
+              className="border rounded p-2 mr-2"
+              value={bmiInput.weight}
+              onChange={(e) =>
+                setBmiInput({ ...bmiInput, weight: e.target.value })
+              }
+            />
+            <input
+              type="number"
+              placeholder="Height (cm)"
+              className="border rounded p-2"
+              value={bmiInput.height}
+              onChange={(e) =>
+                setBmiInput({ ...bmiInput, height: e.target.value })
+              }
+            />
+            <button
+              onClick={calculateBMI}
+              className="ml-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            >
+              Calculate
+            </button>
+          </div>
+          {bmiResult && (
+            <div className="mt-4 text-gray-700">
+              <p>
+                <strong>Your BMI:</strong> {bmiResult.bmi}
+              </p>
+              <p>
+                <strong>Status:</strong> {bmiResult.status}
+              </p>
+            </div>
+          )}
+        </div>
+
         {/* Section: Map */}
         <div className="bg-white shadow rounded p-6 col-span-1 md:col-span-2">
           <h2 className="text-xl font-semibold text-gray-800">Nearby Hospitals</h2>
@@ -77,20 +143,16 @@ const Dashboard = () => {
             Find hospitals near your current location.
           </p>
 
-          {/* Map */}
           <MapContainer
-            center={userLocation} // Dynamically update center
+            center={userLocation}
             zoom={13}
             className="w-full h-96 mt-4"
-            key={userLocation} // Force re-render on user location change
+            key={userLocation}
           >
-            {/* OpenStreetMap Tiles */}
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
-
-            {/* Markers */}
             <UpdateMapCenter center={userLocation} />
             <Marker position={userLocation}>
               <Popup>
@@ -140,7 +202,7 @@ const Dashboard = () => {
 // Custom Component to Dynamically Update Map Center
 const UpdateMapCenter = ({ center }) => {
   const map = useMap();
-  map.setView(center); // Dynamically update the map's view
+  map.setView(center);
   return null;
 };
 
