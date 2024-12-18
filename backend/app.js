@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import patientRoutes from "./routes/patientRoutes.js";
-import appointmentRoutes from "./routes/appointmentRoutes.js";
+// import appointmentRoutes from "./routes/appointmentRoutes.js";
 
 const app = express();
 
@@ -11,6 +11,6 @@ app.use(express.json());
 
 // Routes
 app.use("/api/patients", patientRoutes);
-app.use("/api/appointments", appointmentRoutes);
+// app.use("/api/appointments", appointmentRoutes);
 
 export default app;
