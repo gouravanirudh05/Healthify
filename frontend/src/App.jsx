@@ -10,6 +10,7 @@ import Profile from "./pages/Profile";
 import { ToastContainer } from "react-toastify";
 import HealthBlog from "./pages/HealthBlog";
 import Blog from "./pages/Blog";
+import Chatbot from "./components/Chatbot";
 const App = () => {
   return (
     <Router>
@@ -29,7 +30,7 @@ const App = () => {
             <Route path="/schedule-appointment" element={<AppointmentForm />} /> {/* New route */}
           </Routes>
         </div>
-
+        <Chatbot/>
         {/* Footer */}
         <ToastContainer />
         <Footer />

@@ -30,9 +30,6 @@ const Navbar = () => {
         <Link to="/dashboard" className="text-gray-600 hover:text-blue-600">
           Dashboard
         </Link>
-        <Link to="/schedule-appointment" className="text-gray-600 hover:text-blue-600">
-          Schedule Appointment  {/* New link to appointment form */}
-        </Link>
         {user ? (
           <div className="relative">
             <button

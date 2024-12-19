@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { login, signup } from "../firebase";
+import { login, signup, googleSignIn } from "../firebase"; // Add googleSignIn
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify"; // Import Toastify
 import "react-toastify/dist/ReactToastify.css"; // Import the styles
@@ -17,21 +17,31 @@ const LoginForm = () => {
     setLoading(true);
 
     try {
-      if (signState === "Sign In") 
-      {
+      if (signState === "Sign In") {
         await login(email, password);
-        toast.success("Login successful!"); // Redirect to the dashboard after successful login
-        navigate("/dashboard");
-      } 
-      else {
-        navigate("/signup");
-        await signup(name, email, password);
         toast.success("Login successful!");
-        navigate("/dashboard"); // Redirect to the dashboard after successful signup
+        navigate("/dashboard");
+      } else {
+        await signup(name, email, password);
+        toast.success("Signup successful!");
+        navigate("/dashboard");
       }
     } catch (error) {
-      toast.error(`Error: ${error.message}`); // Display error with Toastify
-      navigate("/login")
+      toast.error(`Error: ${error.message}`);
+      navigate("/login");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    try {
+      await googleSignIn();
+      toast.success("Google sign-in successful!");
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error(`Error: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -87,6 +97,15 @@ const LoginForm = () => {
             {loading ? "Processing..." : signState}
           </button>
         </form>
+
+        <button
+          onClick={handleGoogleSignIn}
+          disabled={loading}
+          className="bg-red-500 text-white px-6 py-2 rounded w-full mt-4 hover:bg-red-600"
+        >
+          {loading ? "Processing..." : "Sign in with Google"}
+        </button>
+
         <div className="mt-4 text-center">
           <p>
             {signState === "Sign In"
