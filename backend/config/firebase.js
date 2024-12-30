@@ -1,10 +1,16 @@
-// import admin from "firebase-admin";
-// import serviceAccount from "./serviceAccountKey.json"; // Downloaded from Firebase Console
+import admin from "firebase-admin";
+import dotenv from "dotenv";
+dotenv.config();
 
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-//   databaseURL: "https://your-project-id.firebaseio.com", // Replace with your Firebase DB URL
-// });
+admin.initializeApp({
+  credential: admin.credential.cert({
+    apiKey: import.meta.env.VITE_API_KEY,
+    authDomain: "healthcare-project-88c86.firebaseapp.com",
+    projectId: "healthcare-project-88c86",
+    storageBucket: "healthcare-project-88c86.firebasestorage.app",
+    messagingSenderId: "319750410952",
+    appId: "1:319750410952:web:d9da4ae968840dcab9cbfd"
+  }),
+});
 
-// const db = admin.firestore();
-// export { admin, db };
+export { admin };
