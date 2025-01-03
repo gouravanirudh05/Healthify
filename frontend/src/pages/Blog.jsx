@@ -33,7 +33,7 @@ const HealthBlog = () => {
   // Function to Fetch Blogs Using Gemini API
   const fetchDynamicBlogs = async () => {
     try {
-      const API_KEY =import.meta.env.VITE_API_KEY; // Replace with your Gemini API key
+      const API_KEY =import.meta.env.VITE_GEMINI_API_KEY; // Replace with your Gemini API key
       const response = await axios.post(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`,
         {
@@ -41,7 +41,7 @@ const HealthBlog = () => {
             {
               parts: [
                 {
-                  text: "Generate 3 short blog posts on maintaining health habits. Each blog post should include a title, a short description, and an actionable tip.",
+                  text: "Generate 10 short blog posts on maintaining health habits. Each blog post should include a title, a short description, and an actionable tip.Give ",
                 },
               ],
             },
