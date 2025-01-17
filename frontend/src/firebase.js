@@ -6,9 +6,9 @@ import {
   signInWithEmailAndPassword,
   signOut,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
 } from "firebase/auth";
-import { addDoc, collection, getFirestore } from "firebase/firestore";
+import { doc, setDoc, getDoc, getFirestore } from "firebase/firestore"; // Updated imports for Firestore
 import { toast } from "react-toastify";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -20,9 +20,10 @@ const firebaseConfig = {
   projectId: "healthcare-project-88c86",
   storageBucket: "healthcare-project-88c86.firebasestorage.app",
   messagingSenderId: "319750410952",
-  appId: "1:319750410952:web:d9da4ae968840dcab9cbfd"
+  appId: "1:319750410952:web:d9da4ae968840dcab9cbfd",
 };
 
+// Initialize Firebase app and services
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -34,12 +35,12 @@ const signup = async (name, email, password) => {
     const response = await createUserWithEmailAndPassword(auth, email, password);
     const user = response.user;
 
-    // Add user details to Firestore in the 'users' collection
-    await addDoc(collection(db, "users"), {
+    // Add user details to Firestore in the 'users' collection using uid as document ID
+    await setDoc(doc(db, "users", user.uid), {
       uid: user.uid,
       name: name,
       authProvider: "local",
-      email: email
+      email: email,
     });
 
     console.log("User signed up and added to Firestore");
@@ -71,15 +72,20 @@ const googleSignIn = async () => {
     const response = await signInWithPopup(auth, provider); // Sign in using Google
     const user = response.user;
 
-    // Check if user exists in Firestore; if not, add them
-    const userDoc = {
-      uid: user.uid,
-      name: user.displayName || "Unknown",
-      authProvider: "google",
-      email: user.email
-    };
+    // Reference the user's document in Firestore
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
 
-    await addDoc(collection(db, "users"), userDoc);
+    // If the user doesn't already exist in Firestore, add them
+    if (!userSnap.exists()) {
+      await setDoc(userRef, {
+        uid: user.uid,
+        name: user.displayName || "Unknown",
+        authProvider: "google",
+        email: user.email,
+      });
+    }
+
     console.log("Google user signed in and added to Firestore");
   } catch (error) {
     console.log(error);

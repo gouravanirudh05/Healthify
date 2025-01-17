@@ -5,10 +5,12 @@ const HealthBlog = () => {
   const [articles, setArticles] = useState([]); 
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null); 
+
   const getRandomPlaceholderImage = () => {
     const randomId = Math.floor(Math.random() * 1000); 
     return `https://picsum.photos/400/200?random=${randomId}`;
   };
+
   // Fetch health articles using NewsAPI
   useEffect(() => {
     const fetchArticles = async () => {
@@ -29,6 +31,11 @@ const HealthBlog = () => {
     fetchArticles();
   }, []);
 
+  // Filter out articles with missing content (image, title, description)
+  const validArticles = articles.filter(
+    article => article.title && article.urlToImage && article.description
+  );
+
   return (
     <div className="container mx-auto p-8">
       <h1 className="text-4xl font-bold text-gray-800 mb-6">Health Related News</h1>
@@ -36,7 +43,7 @@ const HealthBlog = () => {
       {error && <p className="text-red-500">{error}</p>}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {articles.map((article, index) => (
+        {validArticles.map((article, index) => (
           <div
             key={index}
             className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition"

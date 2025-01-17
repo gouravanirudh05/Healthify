@@ -1,49 +1,54 @@
 import React, { useState } from "react";
-import { login, signup, googleSignIn } from "../firebase"; // Add googleSignIn
+import { login, signup, googleSignIn } from "../firebase"; // Firebase functions
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify"; // Import Toastify
-import "react-toastify/dist/ReactToastify.css"; // Import the styles
-import sideimage from "../assets/top_service.png"
+import { toast, ToastContainer } from "react-toastify"; // Toast notifications
+import "react-toastify/dist/ReactToastify.css"; // Toastify styles
+import sideimage from "../assets/top_service.png";
+
 const LoginForm = () => {
   const [signState, setSignState] = useState("Sign In");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("patient"); // New state for user role
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const user_auth = async (event) => {
-    event.preventDefault();
-    setLoading(true);
+  const userAuth = async (event) => {
+    event.preventDefault(); // Prevent form default behavior
+    setLoading(true); // Set loading state
 
     try {
       if (signState === "Sign In") {
+        // Handle login
         await login(email, password);
         toast.success("Login successful!");
-        navigate("/dashboard");
+        navigate(role === "doctor" ? "/doctor-dashboard" : "/dashboard");
       } else {
+        // Handle signup
         await signup(name, email, password);
         toast.success("Signup successful!");
-        navigate("/dashboard");
+        navigate(role === "doctor" ? "/doctor-dashboard" : "/dashboard");
       }
     } catch (error) {
+      // Handle errors
       toast.error(`Error: ${error.message}`);
-      navigate("/login");
     } finally {
-      setLoading(false);
+      setLoading(false); // Reset loading state
     }
   };
 
   const handleGoogleSignIn = async () => {
-    setLoading(true);
+    setLoading(true); // Set loading state
     try {
-      await googleSignIn();
+      await googleSignIn(); // Call Google Sign-In
       toast.success("Google sign-in successful!");
-      navigate("/dashboard");
+      navigate(role === "doctor" ? "/doctor-dashboard" : "/dashboard");
     } catch (error) {
+      // Handle errors
       toast.error(`Error: ${error.message}`);
     } finally {
-      setLoading(false);
+      setLoading(false); // Reset loading state
     }
   };
 
@@ -58,11 +63,11 @@ const LoginForm = () => {
             className="w-full h-full object-cover rounded-l"
           />
         </div>
-  
+
         {/* Form Section */}
         <div className="w-full md:w-1/2 p-8">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">{signState}</h2>
-          <form onSubmit={user_auth}>
+          <form onSubmit={userAuth}>
             {signState === "Sign Up" && (
               <div className="mb-4">
                 <label className="block text-gray-600 mb-2">Name</label>
@@ -98,17 +103,30 @@ const LoginForm = () => {
                 required
               />
             </div>
+
+            {signState === "Sign In" && (
+              <div className="mb-4">
+                <label className="block text-gray-600 mb-2">Are you a doctor or patient?</label>
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
+                  <option value="patient">Patient</option>
+                  <option value="doctor">Doctor</option>
+                </select>
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={loading}
-              className={`bg-blue-500 text-white px-6 py-2 rounded w-full ${
-                loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600"
-              }`}
+              className={`bg-blue-500 text-white px-6 py-2 rounded w-full ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600"}`}
             >
               {loading ? "Processing..." : signState}
             </button>
           </form>
-  
+
           <button
             onClick={handleGoogleSignIn}
             disabled={loading}
@@ -116,17 +134,13 @@ const LoginForm = () => {
           >
             {loading ? "Processing..." : "Sign in with Google"}
           </button>
-  
+
           <div className="mt-4 text-center">
             <p>
-              {signState === "Sign In"
-                ? "Don't have an account?"
-                : "Already have an account?"}
+              {signState === "Sign In" ? "Don't have an account?" : "Already have an account?"}
               <button
                 type="button"
-                onClick={() =>
-                  setSignState(signState === "Sign In" ? "Sign Up" : "Sign In")
-                }
+                onClick={() => setSignState(signState === "Sign In" ? "Sign Up" : "Sign In")}
                 className="text-blue-500 hover:underline ml-2"
               >
                 {signState === "Sign In" ? "Sign Up" : "Sign In"}
@@ -135,12 +149,11 @@ const LoginForm = () => {
           </div>
         </div>
       </div>
-  
+
       {/* ToastContainer */}
       <ToastContainer />
     </>
   );
-
 };
 
 export default LoginForm;

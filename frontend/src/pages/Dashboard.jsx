@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-
+import { useNavigate } from "react-router-dom";
 const Dashboard = () => {
   const [userLocation, setUserLocation] = useState([37.7749, -122.4194]); // Default: San Francisco
   const [hospitals, setHospitals] = useState([]);
@@ -69,7 +69,7 @@ const Dashboard = () => {
 
     setBmiResult({ bmi, status });
   };
-
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow p-4">
@@ -80,9 +80,10 @@ const Dashboard = () => {
         <div className="bg-white shadow rounded p-6">
           <h2 className="text-xl font-semibold text-gray-800">Health Reports</h2>
           <p className="text-gray-600 mt-2">View your detailed health history.</p>
-          <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-            View Reports
-          </button>
+          <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => navigate("/reports")}>
+  View Reports
+</button>
+
         </div>
 
         {/* Section: Appointments */}

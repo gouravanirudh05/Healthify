@@ -41,7 +41,7 @@ const HealthBlog = () => {
             {
               parts: [
                 {
-                  text: "Generate 10 short blog posts on maintaining health habits. Each blog post should include a title, a short description, and an actionable tip.Give ",
+                  text: "Generate 10 short blog posts on maintaining health habits. Each blog post should include a title, a short description, and an actionable tip. Use plain text without any bold or italic characters.Also the title need not be labeled",
                 },
               ],
             },
