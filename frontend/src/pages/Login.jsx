@@ -5,6 +5,9 @@ import { toast, ToastContainer } from "react-toastify"; // Toast notifications
 import "react-toastify/dist/ReactToastify.css"; // Toastify styles
 import sideimage from "../assets/top_service.png";
 
+const BACKEND_URL =
+  import.meta.env.VITE_APP_BACKEND_URL ?? 'http://localhost:5000';
+
 const LoginForm = () => {
   const [signState, setSignState] = useState("Sign In");
   const [name, setName] = useState("");
@@ -21,14 +24,41 @@ const LoginForm = () => {
     try {
       if (signState === "Sign In") {
         // Handle login
-        await login(email, password);
+        const response = await fetch(`${BACKEND_URL}/api/${role}/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const json = await response.json();
+        if (json.token) {
+          localStorage.setItem("jwtToken", json.token);
+          toast.success("Login successful!");
+          navigate(role === "doctor" ? "/doctor-dashboard" : "/dashboard");
+        } else if (json.error) {
+          toast.error("Error: " + json.error);
+        } else if (json.message) {
+          toast.success("Message: " + json.message);
+        }
         toast.success("Login successful!");
         navigate(role === "doctor" ? "/doctor-dashboard" : "/dashboard");
       } else {
         // Handle signup
-        await signup(name, email, password);
+        const response = await fetch(`${BACKEND_URL}/api/admin/signup`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            password,
+          }),
+        });
+
+        const json = await response.json();
+        setSignState("Sign In")
         toast.success("Signup successful!");
-        navigate(role === "doctor" ? "/doctor-dashboard" : "/dashboard");
       }
     } catch (error) {
       // Handle errors
@@ -66,7 +96,9 @@ const LoginForm = () => {
 
         {/* Form Section */}
         <div className="w-full md:w-1/2 p-8">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">{signState}</h2>
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">
+            {signState}
+          </h2>
           <form onSubmit={userAuth}>
             {signState === "Sign Up" && (
               <div className="mb-4">
@@ -106,7 +138,9 @@ const LoginForm = () => {
 
             {signState === "Sign In" && (
               <div className="mb-4">
-                <label className="block text-gray-600 mb-2">Are you a doctor or patient?</label>
+                <label className="block text-gray-600 mb-2">
+                  Are you a doctor or patient?
+                </label>
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
@@ -114,6 +148,7 @@ const LoginForm = () => {
                 >
                   <option value="patient">Patient</option>
                   <option value="doctor">Doctor</option>
+                  <option value="admin">Admin</option>
                 </select>
               </div>
             )}
@@ -121,7 +156,9 @@ const LoginForm = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`bg-blue-500 text-white px-6 py-2 rounded w-full ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600"}`}
+              className={`bg-blue-500 text-white px-6 py-2 rounded w-full ${
+                loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600"
+              }`}
             >
               {loading ? "Processing..." : signState}
             </button>
@@ -137,10 +174,14 @@ const LoginForm = () => {
 
           <div className="mt-4 text-center">
             <p>
-              {signState === "Sign In" ? "Don't have an account?" : "Already have an account?"}
+              {signState === "Sign In"
+                ? "Don't have an account?"
+                : "Already have an account?"}
               <button
                 type="button"
-                onClick={() => setSignState(signState === "Sign In" ? "Sign Up" : "Sign In")}
+                onClick={() =>
+                  setSignState(signState === "Sign In" ? "Sign Up" : "Sign In")
+                }
                 className="text-blue-500 hover:underline ml-2"
               >
                 {signState === "Sign In" ? "Sign Up" : "Sign In"}

@@ -1,24 +1,14 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 // MongoDB Atlas connection (replace <username>, <password>, and <dbname> with your values)
-const mongoURI = 'mongodb+srv://gouravbj2005:MDganapa05@healthify.szb75.mongodb.net/';
+const mongoURI = 'mongodb+srv://sathishsv:Sanvij1103@cluster0.3llub.mongodb.net/healthify';
 mongoose
   .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB Atlas'))
   .catch((err) => console.log('MongoDB connection error:', err));
 
 // Define Doctor and Appointment models
-const Doctor = mongoose.model('Doctor', new mongoose.Schema({
-  name: String,
-  specialty: String,
-}));
 
-const Appointment = mongoose.model('Appointment', new mongoose.Schema({
-  doctorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor' },
-  doctorName: String,
-  date: String,
-  time: String,
-}));
 
 // Mock data
 const mockDoctors = [
