@@ -1,26 +1,41 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+
+const BACKEND_URL =
+  import.meta.env.VITE_APP_BACKEND_URL ?? 'http://localhost:5000';
 
 const Reports = () => {
-  const reports = [
-    {
-      id: 1,
-      date: "2025-01-01",
-      type: "Blood Test",
-      link: "/reports/blood-test-2025-01-01.pdf",
-    },
-    {
-      id: 2,
-      date: "2025-01-05",
-      type: "X-Ray",
-      link: "/reports/x-ray-2025-01-05.pdf",
-    },
-    {
-      id: 3,
-      date: "2025-01-08",
-      type: "MRI",
-      link: "/reports/mri-2025-01-08.pdf",
-    },
-  ];
+  const [reports, setReports] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch(`${BACKEND_URL}/api/getReports`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const json = await response.json();
+      console.log(json.reports)
+
+      // Process the buffer to create a Blob URL
+      const processedReports = json.reports.map((report) => {
+        const blob = new Blob([Uint8Array.from(report.pdf.data)], {
+          type: "application/pdf",
+        });
+        const url = URL.createObjectURL(blob);
+        return {
+          ...report,
+          link: url, // Add the downloadable link to each report
+        };
+      });
+
+      setReports(processedReports);
+    }
+
+    fetchData();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -37,7 +52,7 @@ const Reports = () => {
             <thead>
               <tr className="bg-gray-100">
                 <th className="border border-gray-300 px-4 py-2 text-left">Date</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">Report Type</th>
+                <th className="border border-gray-300 px-4 py-2 text-left">Report Name</th>
                 <th className="border border-gray-300 px-4 py-2 text-left">Action</th>
               </tr>
             </thead>
@@ -45,11 +60,11 @@ const Reports = () => {
               {reports.map((report) => (
                 <tr key={report.id} className="hover:bg-gray-50">
                   <td className="border border-gray-300 px-4 py-2">{report.date}</td>
-                  <td className="border border-gray-300 px-4 py-2">{report.type}</td>
+                  <td className="border border-gray-300 px-4 py-2">{report.name}</td>
                   <td className="border border-gray-300 px-4 py-2">
                     <a
                       href={report.link}
-                      download
+                      download={`${report.type}-${report.date}.pdf`}
                       className="text-blue-500 hover:underline"
                     >
                       Download

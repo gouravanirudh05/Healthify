@@ -14,6 +14,8 @@ import Blog from "./pages/Blog";
 import Chatbot from "./components/Chatbot";
 import ScheduleAppointment from "./pages/Appointment";
 import DoctorDashboard from "./pages/DoctorDashboard";
+import AdminDashboard from "./pages/Admindashboard";
+import RegisterPatient from "./pages/RegisterPatient";
 import About from "./pages/About";
 const App = () => {
   return (
@@ -24,8 +26,7 @@ const App = () => {
 
         {/* Main Content */}
         <div className="flex-grow">
-          <Routes>
-            
+          <Routes>            
             <Route path="/news" element={<HealthBlog />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/" element={<Hero />} />
@@ -34,8 +35,10 @@ const App = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/scheduleappointment" element={<ScheduleAppointment />} />
             <Route path="/schedule-appointment" element={<AppointmentForm />} /> {/* New route */}
+            <Route path="/register-patient" element={<RegisterPatient />} />
             <Route path="/reports" element={<Reports />} /> {/* Added route for Reports */}
           </Routes>
         </div>
