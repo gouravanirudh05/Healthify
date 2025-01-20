@@ -67,10 +67,11 @@ app.get("/api/doctors", async (req, res) => {
   }
 });
 
-app.post("/api/appointments", async (req, res) => {
+app.post("/api/appointments", patientAuthMiddleware, async (req, res) => {
   try {
     const { doctorId, doctorName, date, time } = req.body;
-    const appointment = new Appointment({ doctorId, doctorName, date, time });
+    const doctor = await Doctor.findById(doctorId);
+    const appointment = new Appointment({ doctorId: doctor._id, doctorName, patientId: req.patient._id, patientName: req.patient.name, date, time });
     await appointment.save();
     res.status(201).json(appointment);
   } catch (err) {
@@ -175,9 +176,30 @@ app.post("/api/patient/register", async (req, res) => {
 
     const { name, email, age, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    let admin = new Patient({ name, email, age, password: hashedPassword });
-    await admin.save();
-    return res.status(201).json({ message: 'Admin created successfully' });
+    let patient = new Patient({ name, email, age, password: hashedPassword });
+    await patient.save();
+    return res.status(201).json({ message: 'Patient created successfully' });
+} catch (error) {
+    return res.status(500).json({ error: error.message });
+}
+});
+
+app.post("/api/doctor/register", async (req, res) => {
+  try {
+    let user_username = await Doctor.findOne({ name: req.body.name });
+    let user_email = await Doctor.findOne({ email: req.body.email });
+    if (user_email) {
+        return res.status(403).json({ message: 'User already exists, please log in' });
+    }
+    else if (user_username) {
+        return res.status(403).json({ message: 'Username already exists, try using a different one' });
+    }
+
+    const { name, email, password, speciality } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    let doctor = new Doctor({ name, email, password: hashedPassword, speciality });
+    await doctor.save();
+    return res.status(201).json({ message: 'Doctor created successfully' });
 } catch (error) {
     return res.status(500).json({ error: error.message });
 }

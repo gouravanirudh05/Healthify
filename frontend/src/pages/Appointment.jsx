@@ -10,6 +10,8 @@ const ScheduleAppointment = () => {
   const [appointmentTime, setAppointmentTime] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [agoraDetails, setAgoraDetails] = useState(null); // For Agora meeting details
+  const [patientComplaint, setPatientComplaint] = useState(""); // State for storing the complaint
+  const [isComplaintSubmitted, setIsComplaintSubmitted] = useState(false); // Track if the complaint is submitted
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,6 +38,41 @@ const ScheduleAppointment = () => {
     }
   };
 
+  const fetchDepartment = async () => {
+    try {
+      const API_KEY = import.meta.env.VITE_GEMINI_API_KEY; // Replace with your Gemini API key
+      const response = await axios.post(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`,
+        {
+          contents: [
+            {
+              parts: [
+                {
+                  text: `This is the complaint of the patient: ${patientComplaint}. Give me the department that should handle this, give me just the word`,
+                },
+              ],
+            },
+          ],
+        }
+      );
+  
+      const generatedText =
+        response.data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      const matchingDoctor = doctors.find(doctor => 
+        doctor.speciality.toLowerCase() === generatedText.toLowerCase()
+      );
+        
+      if (matchingDoctor) {
+        setSelectedDoctor(matchingDoctor);
+      } else {
+        alert("No doctor found for the given department.");
+      }
+
+    } catch (error) {
+      console.error("Error fetching dynamic department:", error);
+    }
+  };
+
   const handleScheduleAppointment = async () => {
     if (!selectedDoctor || !appointmentDate || !appointmentTime) {
       alert("Please fill in all the fields.");
@@ -53,6 +90,7 @@ const ScheduleAppointment = () => {
       const response = await fetch("http://localhost:5000/api/appointments", {
         method: "POST",
         headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(appointment),
@@ -61,11 +99,11 @@ const ScheduleAppointment = () => {
       const data = await response.json();
       setSuccessMessage("Appointment scheduled successfully!");
 
-      // Create Agora meeting room
-      const channelName = `appointment-${data._id}`;
-      const agoraData = await generateAgoraToken(channelName);
+      // // Create Agora meeting room
+      // const channelName = `appointment-${data._id}`;
+      // const agoraData = await generateAgoraToken(channelName);
 
-      setAgoraDetails({ channelName: agoraData.channelName, token: agoraData.token });
+      // setAgoraDetails({ channelName: agoraData.channelName, token: agoraData.token });
     } catch (error) {
       console.error("Error scheduling appointment:", error);
       alert("An error occurred while scheduling the appointment.");
@@ -78,25 +116,48 @@ const ScheduleAppointment = () => {
         <h1 className="text-2xl font-bold text-gray-700">Schedule Appointment</h1>
       </header>
       <main className="p-8">
-        {/* Doctor Selection */}
+        {/* Patient Complaint */}
         <div className="bg-white shadow rounded p-6">
-          <h2 className="text-xl font-semibold text-gray-800">Select a Doctor</h2>
-          <select
-            value={selectedDoctor ? selectedDoctor._id : ""}
-            onChange={(e) => {
-              const selectedDoc = doctors.find((doc) => doc._id === e.target.value);
-              setSelectedDoctor(selectedDoc);
-            }}
-            className="mt-4 p-2 border rounded"
+          <label className="block text-sm font-semibold text-gray-700">Describe your complaint/problem</label>
+          <textarea
+            value={patientComplaint}
+            onChange={(e) => setPatientComplaint(e.target.value)}
+            className="mt-2 p-2 border rounded w-full"
+            rows="4"
+            placeholder="Describe your issue here..."
+          />
+          <button
+            onClick={() => {
+              fetchDepartment();
+              setIsComplaintSubmitted(true);
+            }} // Handle "OK" button action
+            className="ml-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
           >
-            <option value="" disabled>Select a Doctor</option>
-            {doctors.map((doctor) => (
-              <option key={doctor._id} value={doctor._id}>
-                {doctor.name} - {doctor.specialty}
-              </option>
-            ))}
-          </select>
+            OK
+          </button>
         </div>
+
+        {/* Doctor Selection (only visible after complaint is submitted) */}
+        {isComplaintSubmitted && (
+          <div className="bg-white shadow rounded p-6 mt-6">
+            <h2 className="text-xl font-semibold text-gray-800">Select a Doctor</h2>
+            <select
+              value={selectedDoctor ? selectedDoctor._id : ""}
+              onChange={(e) => {
+                const selectedDoc = doctors.find((doc) => doc._id === e.target.value);
+                setSelectedDoctor(selectedDoc);
+              }}
+              className="mt-4 p-2 border rounded"
+            >
+              <option value="" disabled>Select a Doctor</option>
+              {doctors.map((doctor) => (
+                <option key={doctor._id} value={doctor._id}>
+                  {doctor.name} - {doctor.speciality}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         {/* Date and Time Selection */}
         {selectedDoctor && (

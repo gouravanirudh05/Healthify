@@ -40,7 +40,6 @@ const LoginForm = () => {
         } else if (json.message) {
           toast.success("Message: " + json.message);
         }
-        toast.success("Login successful!");
         //navigate(role === "doctor" ? "/doctor-dashboard" : "/dashboard");
       } else {
         // Handle signup

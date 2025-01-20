@@ -4,7 +4,7 @@ const Doctor = mongoose.model('Doctor', new mongoose.Schema({
     name: String,
     email: String,
     password: String,
-    specialty: String,
+    speciality: String,
   }));
 
 export default Doctor;

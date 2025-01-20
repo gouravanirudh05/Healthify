@@ -16,6 +16,7 @@ import ScheduleAppointment from "./pages/Appointment";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import AdminDashboard from "./pages/Admindashboard";
 import RegisterPatient from "./pages/RegisterPatient";
+import RegisterDoctor from "./pages/RegisterDoctor"; // New import for RegisterDoctor
 import About from "./pages/About";
 const App = () => {
   return (
@@ -39,6 +40,7 @@ const App = () => {
             <Route path="/scheduleappointment" element={<ScheduleAppointment />} />
             <Route path="/schedule-appointment" element={<AppointmentForm />} /> {/* New route */}
             <Route path="/register-patient" element={<RegisterPatient />} />
+            <Route path="/register-doctor" element={<RegisterDoctor />} /> {/* New route */}
             <Route path="/reports" element={<Reports />} /> {/* Added route for Reports */}
           </Routes>
         </div>

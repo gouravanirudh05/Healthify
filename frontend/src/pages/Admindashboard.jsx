@@ -118,6 +118,18 @@ const AdminDashboard = () => {
             Register Patient
           </button>
         </div>
+
+        {/* Navigation to Register Doctor */}
+        <div className="bg-white shadow rounded-lg p-6">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Doctor Management</h2>
+          <p className="text-gray-600 mb-6">Register new doctors.</p>
+          <button
+            onClick={() => navigate("/register-doctor")}
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+          >
+            Register Doctor
+          </button>
+        </div>
       </main>
     </div>
   );
