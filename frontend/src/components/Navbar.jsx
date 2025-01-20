@@ -1,18 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { logout } from "../firebase"; // Import your logout function
 import { Link } from "react-router-dom"; // Import Link for navigation
+import { jwtDecode } from "jwt-decode";
 
 const Navbar = () => {
   const { user } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [dashboard, setDashboard] = useState('');
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
   const handleLogout = async () => {
     await logout(); // Call the logout function
     setShowLogoutConfirm(false); // Close the confirmation popup
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      console.log(decodedToken.role);
+
+      if (decodedToken.role === 'admin') {
+        setDashboard('/admin-dashboard');
+      } else if (decodedToken.role === 'patient') {
+        setDashboard('/patient-dashboard');
+      } else if (decodedToken.role === 'doctor') {
+        setDashboard('/doctor-dashboard');
+      } else {
+        setDashboard('/login');
+      }
+    }
+  }, []); 
 
   return (
     <nav className="bg-white shadow-md p-4 flex justify-between items-center">
@@ -27,7 +47,7 @@ const Navbar = () => {
         <Link to="/blog" className="text-gray-600 hover:text-blue-600">
           Blog
         </Link>
-        <Link to="/dashboard" className="text-gray-600 hover:text-blue-600">
+        <Link to={dashboard} className="text-gray-600 hover:text-blue-600">
           Dashboard
         </Link>
         {user ? (

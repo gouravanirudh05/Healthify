@@ -5,7 +5,7 @@ import Footer from "./components/Footer";
 import AppointmentForm from './components/AppointmentForm';
 import Hero from "./pages/Hero";
 import LoginForm from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+import PatientDashboard from "./pages/PatientDashboard";
 import Profile from "./pages/Profile";
 import Reports from "./pages/Reports"; // Added import for Reports
 import { ToastContainer } from "react-toastify";
@@ -32,7 +32,7 @@ const App = () => {
             <Route path="/" element={<Hero />} />
             <Route path="/about" element={<About />} />
             <Route path="/login" element={<LoginForm />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/patient-dashboard" element={<PatientDashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />

@@ -4,8 +4,12 @@ import Typed from "typed.js";
 import healthReports from "../assets/healthreports.png";
 import appointments from "../assets/appointments.png";
 import trusteddoctors from "../assets/trusteddoctors.png";
+import { jwtDecode } from "jwt-decode";
+
 const Hero = () => {
   const navigate = useNavigate(); // Initialize the navigate function
+  const token = localStorage.getItem('jwtToken');
+  const decodedToken = jwtDecode(token);
   const testimonialsRef = useRef(null);
   const handleGetStarted = () => {
     navigate("/login"); // Redirect to /login when clicked
@@ -19,7 +23,7 @@ const Hero = () => {
     const typed = new Typed(typedTextRef.current, {
       strings: ["Welcome to Healthcare Simplified"], // Text to type
       typeSpeed: 50, // Slower typing speed
-      backSpeed: 40, // Slower backspacing speed
+      backSpeed: 40,  // Slower backspacing speed
       startDelay: 500, // Delay before typing starts
       loop: false, // Disable looping
       onComplete: () => {

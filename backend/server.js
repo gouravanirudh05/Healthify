@@ -91,7 +91,7 @@ app.post("/api/patient/login", async (req, res) => {
           return res.status(401).json({ message: 'Invalid credentials' });
       }
 
-      const token = jwt.sign({ id: patient._id }, 'your_secret_key', { expiresIn: '3h' });
+      const token = jwt.sign({ id: patient._id, role: 'patient' }, 'your_secret_key', { expiresIn: '3h' });
 
       res.json({ token });
   } catch (error) {
@@ -112,7 +112,7 @@ app.post("/api/doctor/login", async (req, res) => {
           return res.status(401).json({ message: 'Invalid credentials' });
       }
 
-      const token = jwt.sign({ id: doctor._id }, 'your_secret_key', { expiresIn: '3h' });
+      const token = jwt.sign({ id: doctor._id, role: 'doctor' }, 'your_secret_key', { expiresIn: '3h' });
 
       res.json({ token });
   } catch (error) {
@@ -133,7 +133,7 @@ app.post("/api/admin/login", async (req, res) => {
           return res.status(401).json({ message: 'Invalid credentials' });
       }
 
-      const token = jwt.sign({ id: admin._id }, 'your_secret_key', { expiresIn: '3h' });
+      const token = jwt.sign({ id: admin._id, role: 'admin' }, 'your_secret_key', { expiresIn: '3h' });
 
       res.json({ token });
   } catch (error) {

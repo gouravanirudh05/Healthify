@@ -34,14 +34,14 @@ const LoginForm = () => {
         if (json.token) {
           localStorage.setItem("jwtToken", json.token);
           toast.success("Login successful!");
-          navigate(role === "doctor" ? "/doctor-dashboard" : "/dashboard");
+          navigate(role === "doctor" ? "/doctor-dashboard" : (role === "patient" ? "/patient-dashboard" : "/admin-dashboard"));
         } else if (json.error) {
           toast.error("Error: " + json.error);
         } else if (json.message) {
           toast.success("Message: " + json.message);
         }
         toast.success("Login successful!");
-        navigate(role === "doctor" ? "/doctor-dashboard" : "/dashboard");
+        //navigate(role === "doctor" ? "/doctor-dashboard" : "/dashboard");
       } else {
         // Handle signup
         const response = await fetch(`${BACKEND_URL}/api/admin/signup`, {
