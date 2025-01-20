@@ -11,6 +11,9 @@ import Report from "./models/reportModel.js";
 import patientAuthMiddleware from "./middlewares/patientAuthMiddleware.js";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -24,7 +27,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // MongoDB Atlas connection
-const mongoURI = "mongodb+srv://sathishsv:Sanvij1103@cluster0.3llub.mongodb.net/healthifydatabase";
+const mongoURI = process.env.MONGO_URI;;
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected to MongoDB Atlas"))
   .catch((err) => console.log("MongoDB connection error:", err));
