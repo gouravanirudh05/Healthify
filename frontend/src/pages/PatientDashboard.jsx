@@ -90,7 +90,7 @@ const Dashboard = () => {
         <div className="bg-white shadow rounded p-6">
           <h2 className="text-xl font-semibold text-gray-800">Appointments</h2>
           <p className="text-gray-600 mt-2">Manage your upcoming appointments.</p>
-          <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+          <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => navigate('/scheduleappointment')}>
             Schedule Now
           </button>
         </div>

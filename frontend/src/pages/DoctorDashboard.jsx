@@ -3,6 +3,9 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useNavigate } from "react-router-dom";
 
+const BACKEND_URL =
+  import.meta.env.VITE_APP_BACKEND_URL ?? 'http://localhost:5000';
+
 const DoctorDashboard = () => {
   const [userLocation, setUserLocation] = useState([37.7749, -122.4194]); // Default: San Francisco
   const [patients, setPatients] = useState([]);
@@ -30,14 +33,27 @@ const DoctorDashboard = () => {
 
   // Dummy data for appointments and patients
   useEffect(() => {
-    setAppointments([
-      { id: 1, patientName: "John Doe", date: "2025-01-10", time: "10:00 AM" },
-      { id: 2, patientName: "Jane Smith", date: "2025-01-12", time: "2:00 PM" },
-    ]);
+    // setAppointments([
+    //   { id: 1, patientName: "John Doe", date: "2025-01-10", time: "10:00 AM" },
+    //   { id: 2, patientName: "Jane Smith", date: "2025-01-12", time: "2:00 PM" },
+    // ]);
     setPatients([
       { id: 1, name: "John Doe", age: 35, gender: "Male", condition: "Flu" },
       { id: 2, name: "Jane Smith", age: 28, gender: "Female", condition: "Asthma" },
     ]);
+    async function fetchData() {
+      const response = await fetch(`${BACKEND_URL}/api/getAppointments`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const json = await response.json();
+      setAppointments(json.appointments)
+    }
+    fetchData();
   }, []);
 
   const navigate = useNavigate();

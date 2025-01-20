@@ -9,6 +9,7 @@ import Patient from "./models/patientModel.js"
 import Admin from "./models/adminModel.js";
 import Report from "./models/reportModel.js";
 import patientAuthMiddleware from "./middlewares/patientAuthMiddleware.js";
+import doctorAuthMiddleware from "./middlewares/doctorAuthMiddleware.js";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
@@ -246,6 +247,15 @@ app.post('/api/report/upload', upload.single('pdf'), async (req, res) => {
   }
 });
 
+app.get('/api/getAppointments', doctorAuthMiddleware, async (req, res) => {
+  try {
+    const appointments = await Appointment.find({ doctorId: req.doctor._id});
+    res.status(200).send({appointments: appointments});
+  } catch (error) {
+    res.status(500).send('Error retrieving the appointments');
+  }
+});
+
 app.get('/api/getReports', patientAuthMiddleware, async (req, res) => {
   try {
     const reports = await Report.find({ patientId: req.patient._id});
@@ -253,7 +263,7 @@ app.get('/api/getReports', patientAuthMiddleware, async (req, res) => {
   } catch (error) {
     res.status(500).send('Error retrieving the reports');
   }
-})
+});
 
 // Endpoint for downloading a PDF by ID
 app.get('api/report/:id', async (req, res) => {
