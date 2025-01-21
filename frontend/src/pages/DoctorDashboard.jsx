@@ -11,6 +11,7 @@ const DoctorDashboard = () => {
   const [patients, setPatients] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [clinicLocation, setClinicLocation] = useState([37.7749, -122.4194]);
+  const [reports, setReports] = useState([]);
 
   // Fetch user location and clinic details
   useEffect(() => {
@@ -41,7 +42,7 @@ const DoctorDashboard = () => {
       { id: 1, name: "John Doe", age: 35, gender: "Male", condition: "Flu" },
       { id: 2, name: "Jane Smith", age: 28, gender: "Female", condition: "Asthma" },
     ]);
-    async function fetchData() {
+    async function fetchAppointments() {
       const response = await fetch(`${BACKEND_URL}/api/getAppointments`, {
         method: "GET",
         headers: {
@@ -53,7 +54,31 @@ const DoctorDashboard = () => {
       const json = await response.json();
       setAppointments(json.appointments)
     }
-    fetchData();
+    async function fetchReports() {
+      const response = await fetch(`${BACKEND_URL}/api/doctor/getReports`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const json = await response.json();
+      const processedReports = json.reports.map((report) => {
+        const blob = new Blob([Uint8Array.from(report.pdf.data)], {
+          type: "application/pdf",
+        });
+        const url = URL.createObjectURL(blob);
+        return {
+          ...report,
+          link: url, // Add the downloadable link to each report
+        };
+      });
+
+      setReports(processedReports);
+    }
+    fetchAppointments();
+    fetchReports();
   }, []);
 
   const navigate = useNavigate();
@@ -68,18 +93,30 @@ const DoctorDashboard = () => {
         <div className="bg-white shadow rounded p-6">
           <h2 className="text-xl font-semibold text-gray-800">Patient Information</h2>
           <p className="text-gray-600 mt-2">View your patients' medical details.</p>
-          <table className="mt-4 w-full table-auto border-collapse border border-gray-300 text-gray-700">
+          <table className="mt-6 w-full table-auto border-collapse border border-gray-300 text-gray-700">
             <thead>
               <tr className="bg-gray-100">
-                <th className="border border-gray-300 px-4 py-2 text-left">Name</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">Condition</th>
+                <th className="border border-gray-300 px-4 py-2 text-left">Patient Id</th>
+                <th className="border border-gray-300 px-4 py-2 text-left">Date</th>
+                <th className="border border-gray-300 px-4 py-2 text-left">Report Name</th>
+                <th className="border border-gray-300 px-4 py-2 text-left">Action</th>
               </tr>
             </thead>
             <tbody>
-              {patients.map((patient, index) => (
-                <tr key={index} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 px-4 py-2">{patient.name}</td>
-                  <td className="border border-gray-300 px-4 py-2">{patient.condition}</td>
+              {reports.map((report) => (
+                <tr key={report.id} className="hover:bg-gray-50">
+                  <td className="border border-gray-300 px-4 py-2">{report.patientId}</td>
+                  <td className="border border-gray-300 px-4 py-2">{report.date}</td>
+                  <td className="border border-gray-300 px-4 py-2">{report.name}</td>
+                  <td className="border border-gray-300 px-4 py-2">
+                    <a
+                      href={report.link}
+                      download={`${report.type}-${report.date}.pdf`}
+                      className="text-blue-500 hover:underline"
+                    >
+                      Download
+                    </a>
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -28,7 +28,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // MongoDB Atlas connection
-const mongoURI = process.env.MONGO_URI;;
+const mongoURI = process.env.MONGO_URI;
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected to MongoDB Atlas"))
   .catch((err) => console.log("MongoDB connection error:", err));
@@ -259,6 +259,16 @@ app.get('/api/getAppointments', doctorAuthMiddleware, async (req, res) => {
 app.get('/api/getReports', patientAuthMiddleware, async (req, res) => {
   try {
     const reports = await Report.find({ patientId: req.patient._id});
+    res.status(200).send({reports: reports});
+  } catch (error) {
+    res.status(500).send('Error retrieving the reports');
+  }
+});
+
+app.get('/api/doctor/getReports', doctorAuthMiddleware, async (req, res) => {
+  try {
+    const appointments = await Appointment.find({ doctorId: req.doctor._id});
+    const reports = await Report.find({ patientId: appointments.map(a => a.patientId) });
     res.status(200).send({reports: reports});
   } catch (error) {
     res.status(500).send('Error retrieving the reports');

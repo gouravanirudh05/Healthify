@@ -8,8 +8,6 @@ import { jwtDecode } from "jwt-decode";
 
 const Hero = () => {
   const navigate = useNavigate(); // Initialize the navigate function
-  const token = localStorage.getItem('jwtToken');
-  const decodedToken = jwtDecode(token);
   const testimonialsRef = useRef(null);
   const handleGetStarted = () => {
     navigate("/login"); // Redirect to /login when clicked
