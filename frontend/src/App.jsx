@@ -18,6 +18,7 @@ import AdminDashboard from "./pages/Admindashboard";
 import RegisterPatient from "./pages/RegisterPatient";
 import RegisterDoctor from "./pages/RegisterDoctor"; // New import for RegisterDoctor
 import About from "./pages/About";
+import LandingPage from "./pages/LandingPage";
 const App = () => {
   return (
     <Router>
@@ -27,10 +28,11 @@ const App = () => {
 
         {/* Main Content */}
         <div className="flex-grow">
-          <Routes>            
+          <Routes>       
+            <Route path="/" element={<LandingPage />} />     
             <Route path="/news" element={<HealthBlog />} />
             <Route path="/blog" element={<Blog />} />
-            <Route path="/" element={<Hero />} />
+            <Route path="/hero" element={<Hero />} />
             <Route path="/about" element={<About />} />
             <Route path="/login" element={<LoginForm />} />
             <Route path="/patient-dashboard" element={<PatientDashboard />} />

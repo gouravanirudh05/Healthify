@@ -146,45 +146,10 @@ const DoctorDashboard = () => {
             </tbody>
           </table>
         </div>
-
-        {/* Section: Map */}
-        <div className="bg-white shadow rounded p-6 col-span-1 md:col-span-2">
-          <h2 className="text-xl font-semibold text-gray-800">Clinic Location</h2>
-          <p className="text-gray-600 mt-2">Find your clinic location and nearby medical facilities.</p>
-
-          <MapContainer
-            center={userLocation}
-            zoom={13}
-            className="w-full h-96 mt-4"
-            key={userLocation}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-            <UpdateMapCenter center={userLocation} />
-            <Marker position={userLocation}>
-              <Popup>
-                <strong>Your Location</strong>
-              </Popup>
-            </Marker>
-            <Marker position={clinicLocation}>
-              <Popup>
-                <strong>Your Clinic</strong>
-              </Popup>
-            </Marker>
-          </MapContainer>
-        </div>
       </main>
     </div>
   );
 };
 
-// Custom Component to Dynamically Update Map Center
-const UpdateMapCenter = ({ center }) => {
-  const map = useMap();
-  map.setView(center);
-  return null;
-};
 
 export default DoctorDashboard;

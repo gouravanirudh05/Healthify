@@ -1,38 +1,44 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
-import { logout } from "../firebase"; // Import your logout function
 import { Link } from "react-router-dom"; // Import Link for navigation
 import { jwtDecode } from "jwt-decode";
 
 const Navbar = () => {
-  const { user } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [dashboard, setDashboard] = useState('');
+  const [dashboard, setDashboard] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
-  const handleLogout = async () => {
-    await logout(); // Call the logout function
+
+  const handleLogout = () => {
+    // Clear any authentication-related data (e.g., JWT token)
+    localStorage.removeItem("jwtToken");
+    setIsLoggedIn(false);
     setShowLogoutConfirm(false); // Close the confirmation popup
+    // Redirect to login if needed
+    window.location.href = "/login";
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('jwtToken');
+    const token = localStorage.getItem("jwtToken");
     if (token) {
+      setIsLoggedIn(true);
       const decodedToken = jwtDecode(token);
       console.log(decodedToken.role);
 
-      if (decodedToken.role === 'admin') {
-        setDashboard('/admin-dashboard');
-      } else if (decodedToken.role === 'patient') {
-        setDashboard('/patient-dashboard');
-      } else if (decodedToken.role === 'doctor') {
-        setDashboard('/doctor-dashboard');
+      if (decodedToken.role === "admin") {
+        setDashboard("/admin-dashboard");
+      } else if (decodedToken.role === "patient") {
+        setDashboard("/patient-dashboard");
+      } else if (decodedToken.role === "doctor") {
+        setDashboard("/doctor-dashboard");
       } else {
-        setDashboard('/login');
+        setDashboard("/login");
       }
+    } else {
+      setIsLoggedIn(false);
     }
-  }, []); 
+  }, []);
 
   return (
     <nav className="bg-white shadow-md p-4 flex justify-between items-center">
@@ -40,6 +46,9 @@ const Navbar = () => {
       <div className="space-x-4 flex items-center">
         <Link to="/" className="text-gray-600 hover:text-blue-600">
           Home
+        </Link>
+        <Link to="/about" className="text-gray-600 hover:text-blue-600">
+          About
         </Link>
         <Link to="/news" className="text-gray-600 hover:text-blue-600">
           News
@@ -50,7 +59,7 @@ const Navbar = () => {
         <Link to={dashboard} className="text-gray-600 hover:text-blue-600">
           Dashboard
         </Link>
-        {user ? (
+        {isLoggedIn ? (
           <div className="relative">
             <button
               onClick={toggleDropdown}

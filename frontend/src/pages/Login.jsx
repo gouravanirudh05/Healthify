@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { login, signup, googleSignIn } from "../firebase"; // Firebase functions
+
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify"; // Toast notifications
 import "react-toastify/dist/ReactToastify.css"; // Toastify styles
@@ -66,21 +66,6 @@ const LoginForm = () => {
       setLoading(false); // Reset loading state
     }
   };
-
-  const handleGoogleSignIn = async () => {
-    setLoading(true); // Set loading state
-    try {
-      await googleSignIn(); // Call Google Sign-In
-      toast.success("Google sign-in successful!");
-      navigate(role === "doctor" ? "/doctor-dashboard" : "/dashboard");
-    } catch (error) {
-      // Handle errors
-      toast.error(`Error: ${error.message}`);
-    } finally {
-      setLoading(false); // Reset loading state
-    }
-  };
-
   return (
     <>
       <div className="max-w-4xl mx-auto bg-white shadow-md rounded flex mt-10">
@@ -162,15 +147,6 @@ const LoginForm = () => {
               {loading ? "Processing..." : signState}
             </button>
           </form>
-
-          <button
-            onClick={handleGoogleSignIn}
-            disabled={loading}
-            className="bg-red-500 text-white px-6 py-2 rounded w-full mt-4 hover:bg-red-600"
-          >
-            {loading ? "Processing..." : "Sign in with Google"}
-          </button>
-
           <div className="mt-4 text-center">
             <p>
               {signState === "Sign In"
