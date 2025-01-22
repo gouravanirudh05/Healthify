@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const PatientDashboard = () => {
@@ -13,8 +13,8 @@ const PatientDashboard = () => {
   ]);
 
   const [appointments, setAppointments] = useState([
-    { id: 1, doctor: "Dr. Smith", date: "Jan 25, 2025", time: "3:00 PM", status: "Confirmed" },
-    { id: 2, doctor: "Dr. Taylor", date: "Feb 2, 2025", time: "11:00 AM", status: "Pending" },
+    { id: 1, doctor: "Dr. Smith", date: "Jan 25, 2025", time: "3:00 PM" },
+    { id: 2, doctor: "Dr. Taylor", date: "Feb 2, 2025", time: "11:00 AM" },
   ]);
 
   const [healthMetrics, setHealthMetrics] = useState({
@@ -25,6 +25,24 @@ const PatientDashboard = () => {
   });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch(`${BACKEND_URL}/api/patient/getPrescriptions`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const json = await response.json();
+
+      setPrescriptions(json.prescriptions);
+    }
+
+    fetchData();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -70,18 +88,16 @@ const PatientDashboard = () => {
             <thead>
               <tr className="bg-gray-100">
                 <th className="border border-gray-300 px-4 py-2 text-left">Medication</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">Dosage</th>
                 <th className="border border-gray-300 px-4 py-2 text-left">Frequency</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">Refill</th>
+                <th className="border border-gray-300 px-4 py-2 text-left">No of days</th>
               </tr>
             </thead>
             <tbody>
               {prescriptions.map((prescription) => (
                 <tr key={prescription.id} className="hover:bg-gray-50">
                   <td className="border border-gray-300 px-4 py-2">{prescription.name}</td>
-                  <td className="border border-gray-300 px-4 py-2">{prescription.dosage}</td>
                   <td className="border border-gray-300 px-4 py-2">{prescription.frequency}</td>
-                  <td className="border border-gray-300 px-4 py-2">{prescription.refill}</td>
+                  <td className="border border-gray-300 px-4 py-2">{prescription.days}</td>
                 </tr>
               ))}
             </tbody>

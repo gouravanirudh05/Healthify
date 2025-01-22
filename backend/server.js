@@ -13,6 +13,7 @@ import doctorAuthMiddleware from "./middlewares/doctorAuthMiddleware.js";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import Prescription from "./models/prescriptionModel.js";
 
 dotenv.config();
 
@@ -270,6 +271,15 @@ app.get('/api/doctor/getReports', doctorAuthMiddleware, async (req, res) => {
     const appointments = await Appointment.find({ doctorId: req.doctor._id});
     const reports = await Report.find({ patientId: appointments.map(a => a.patientId) });
     res.status(200).send({reports: reports});
+  } catch (error) {
+    res.status(500).send('Error retrieving the reports');
+  }
+});
+
+app.get('/api/patient/getPresciptions', patientAuthMiddleware, async (req, res) => {
+  try {
+    const presciptions = await Prescription.find({ patientId: req.patient._id});
+    res.status(200).send({presciptions});
   } catch (error) {
     res.status(500).send('Error retrieving the reports');
   }
