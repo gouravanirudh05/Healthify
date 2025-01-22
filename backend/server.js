@@ -13,9 +13,15 @@ import doctorAuthMiddleware from "./middlewares/doctorAuthMiddleware.js";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import pkg from 'agora-access-token';
+
+const { RtcTokenBuilder, RtcRole } = pkg;
 import Prescription from "./models/prescriptionModel.js";
 
 dotenv.config();
+
+const APP_ID = "252142d27f2a41b083a166b76c41d881";
+const APP_CERTIFICATE = "c8970cde26054522ac9ead01ea602ba1";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -59,6 +65,30 @@ app.post("/api/generate-token", (req, res) => {
   res.json({ token, channelName });
 });
 
+
+app.post("/generateToken", (req, res) => {
+  const { channelName, uid, role } = req.body;
+
+  if (!channelName || !uid) {
+    return res.status(400).send("Channel name and UID are required.");
+  }
+
+  const expirationTimeInSeconds = 3600;
+  const currentTime = Math.floor(Date.now() / 1000);
+  const privilegeExpirationTime = currentTime + expirationTimeInSeconds;
+
+  const token = RtcTokenBuilder.buildTokenWithUid(
+    APP_ID,
+    APP_CERTIFICATE,
+    channelName,
+    uid,
+    role === "publisher" ? RtcRole.PUBLISHER : RtcRole.SUBSCRIBER,
+    privilegeExpirationTime
+  );
+
+  res.json({ token });
+});
+
 // API Routes
 app.get("/api/doctors", async (req, res) => {
   try {
@@ -76,6 +106,15 @@ app.post("/api/appointments", patientAuthMiddleware, async (req, res) => {
     const appointment = new Appointment({ doctorId: doctor._id, doctorName, patientId: req.patient._id, patientName: req.patient.name, date, time });
     await appointment.save();
     res.status(201).json(appointment);
+  } catch (err) {
+    res.status(500).json({ message: "Error scheduling appointment", error: err });
+  }
+});
+
+app.get("/api/patient/appointments", patientAuthMiddleware, async (req, res) => {
+  try {
+    const appointments = await Appointment.find({patientId: req.patient._id});
+    res.status(201).json({appointments});
   } catch (err) {
     res.status(500).json({ message: "Error scheduling appointment", error: err });
   }
@@ -276,7 +315,7 @@ app.get('/api/doctor/getReports', doctorAuthMiddleware, async (req, res) => {
   }
 });
 
-app.get('/api/patient/getPresciptions', patientAuthMiddleware, async (req, res) => {
+app.get('/api/patient/getPrescriptions', patientAuthMiddleware, async (req, res) => {
   try {
     const presciptions = await Prescription.find({ patientId: req.patient._id});
     res.status(200).send({presciptions});

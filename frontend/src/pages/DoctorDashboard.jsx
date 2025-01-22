@@ -83,6 +83,10 @@ const DoctorDashboard = () => {
 
   const navigate = useNavigate();
 
+  const handleJoinCall = (appointmentId) => {
+    navigate(`/meeting-room/${appointmentId}`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow p-4">
@@ -141,6 +145,14 @@ const DoctorDashboard = () => {
                   <td className="border border-gray-300 px-4 py-2">{appointment.patientName}</td>
                   <td className="border border-gray-300 px-4 py-2">{appointment.date}</td>
                   <td className="border border-gray-300 px-4 py-2">{appointment.time}</td>
+                  <td className="border border-gray-300 px-4 py-2">
+                  <button
+                    onClick={() => handleJoinCall(appointment._id)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                  >
+                    Join
+                  </button>
+                </td>
                 </tr>
               ))}
             </tbody>

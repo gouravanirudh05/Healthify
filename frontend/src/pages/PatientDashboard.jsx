@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+const BACKEND_URL =
+  import.meta.env.VITE_APP_BACKEND_URL ?? 'http://localhost:5000';
+
 const PatientDashboard = () => {
   const [notifications, setNotifications] = useState([
     { id: 1, message: "Your lab results are now available." },
@@ -26,8 +29,12 @@ const PatientDashboard = () => {
 
   const navigate = useNavigate();
 
+  const handleJoinCall = (appointmentId) => {
+    navigate(`/meeting-room/${appointmentId}`);
+  };
+
   useEffect(() => {
-    async function fetchData() {
+    async function fetchPrescriptions() {
       const response = await fetch(`${BACKEND_URL}/api/patient/getPrescriptions`, {
         method: "GET",
         headers: {
@@ -41,7 +48,22 @@ const PatientDashboard = () => {
       setPrescriptions(json.prescriptions);
     }
 
-    fetchData();
+    async function fetchAppointments() {
+      const response = await fetch(`${BACKEND_URL}/api/patient/appointments`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const json = await response.json();
+
+      setAppointments(json.appointments);
+    }
+
+    //fetchPrescriptions();
+    fetchAppointments();
   }, []);
 
   return (
@@ -110,10 +132,16 @@ const PatientDashboard = () => {
           <ul className="mt-4 text-gray-600">
             {appointments.map((appointment) => (
               <li key={appointment.id} className="border-b py-2">
-                <strong>Doctor:</strong> {appointment.doctor} <br />
+                <strong>Doctor:</strong> {appointment.doctorName} <br />
                 <strong>Date:</strong> {appointment.date} <br />
                 <strong>Time:</strong> {appointment.time} <br />
                 <strong>Status:</strong> {appointment.status}
+                <button
+                    onClick={() => handleJoinCall(appointment._id)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                  >
+                    Join
+                  </button>
               </li>
             ))}
           </ul>
