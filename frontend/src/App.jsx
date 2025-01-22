@@ -7,7 +7,7 @@ import Hero from "./pages/Hero";
 import LoginForm from "./pages/Login";
 import PatientDashboard from "./pages/PatientDashboard";
 import Profile from "./pages/Profile";
-import Reports from "./pages/Reports"; // Added import for Reports
+import Reports from "./pages/Reports";
 import { ToastContainer } from "react-toastify";
 import HealthBlog from "./pages/HealthBlog";
 import Blog from "./pages/Blog";
@@ -16,9 +16,11 @@ import ScheduleAppointment from "./pages/Appointment";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import AdminDashboard from "./pages/Admindashboard";
 import RegisterPatient from "./pages/RegisterPatient";
-import RegisterDoctor from "./pages/RegisterDoctor"; // New import for RegisterDoctor
+import RegisterDoctor from "./pages/RegisterDoctor";
 import About from "./pages/About";
 import LandingPage from "./pages/LandingPage";
+import MeetingRoom from "./pages/MeetingRoom";
+
 const App = () => {
   return (
     <Router>
@@ -40,13 +42,17 @@ const App = () => {
             <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/scheduleappointment" element={<ScheduleAppointment />} />
-            <Route path="/schedule-appointment" element={<AppointmentForm />} /> {/* New route */}
+            <Route path="/schedule-appointment" element={<AppointmentForm />} />
             <Route path="/register-patient" element={<RegisterPatient />} />
-            <Route path="/register-doctor" element={<RegisterDoctor />} /> {/* New route */}
-            <Route path="/reports" element={<Reports />} /> {/* Added route for Reports */}
+            <Route path="/register-doctor" element={<RegisterDoctor />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/meeting-room/*" element={<MeetingRoom />} />
           </Routes>
         </div>
+
+        {/* Chatbot */}
         <Chatbot />
+
         {/* Footer */}
         <ToastContainer />
         <Footer />
