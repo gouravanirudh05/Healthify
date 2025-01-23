@@ -49,11 +49,6 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center">
-      {/* Header */}
-      <header className="bg-white shadow p-4 w-full flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-700">Care</h1>
-        <button className="text-blue-500 hover:text-blue-700">Sign In</button>
-      </header>
 
       {/* Search Section */}
       <div className="flex flex-col items-center mt-16">
