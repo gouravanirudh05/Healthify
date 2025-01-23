@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css"; // Toastify styles
 import sideimage from "../assets/top_service.png";
 
 const BACKEND_URL =
-  import.meta.env.VITE_APP_BACKEND_URL ?? 'http://localhost:5000';
+  import.meta.env.VITE_APP_BACKEND_URL;
 
 const LoginForm = () => {
   const [signState, setSignState] = useState("Sign In");
