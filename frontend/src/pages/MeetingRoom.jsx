@@ -8,7 +8,7 @@ import AgoraRTC, {
 } from "agora-rtc-react";
 
 const MeetingRoom = () => {
-  const appId = "cb83088f36f2417cb0f2e8677dd5913e";
+  const appId = "e5ea11931e474f3a8aeafe648e56ff92";
   const agoraClient = useRTCClient(AgoraRTC.createClient({ codec: "vp8", mode: "rtc" }));
   const navigate = useNavigate();
 
